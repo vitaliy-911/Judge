@@ -1,7 +1,7 @@
-package com.example.CompetitionOrganizer.controler;
+package com.example.competition_organizer.controler;
 
-import com.example.CompetitionOrganizer.model.Pair;
-import com.example.CompetitionOrganizer.service.PairService;
+import com.example.competition_organizer.model.Pair;
+import com.example.competition_organizer.service.PairService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

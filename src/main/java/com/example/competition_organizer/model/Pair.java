@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.model;
+package com.example.competition_organizer.model;
 
 import jakarta.persistence.*;
 import lombok.*;

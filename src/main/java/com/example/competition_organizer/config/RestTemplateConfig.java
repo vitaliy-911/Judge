@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.config;
+package com.example.competition_organizer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

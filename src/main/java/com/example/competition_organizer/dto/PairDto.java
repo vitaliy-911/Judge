@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.dto;
+package com.example.competition_organizer.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
