@@ -1,7 +1,7 @@
-package com.example.CompetitionOrganizer.controler;
+package com.example.competition_organizer.controler;
 
-import com.example.CompetitionOrganizer.model.Location;
-import com.example.CompetitionOrganizer.service.LocationService;
+import com.example.competition_organizer.model.Location;
+import com.example.competition_organizer.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

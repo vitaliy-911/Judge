@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.model;
+package com.example.competition_organizer.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +17,4 @@ public class Location {
     private Long id;
 
     private String name;
-
-
-
 }

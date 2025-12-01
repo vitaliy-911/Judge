@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.exception;
+package com.example.competition_organizer.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     

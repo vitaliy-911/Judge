@@ -1,8 +1,9 @@
-package com.example.CompetitionOrganizer.service;
+package com.example.competition_organizer.service;
 
-import com.example.CompetitionOrganizer.dto.FighterResponseDto;
-import com.example.CompetitionOrganizer.model.HitLocation;
-import com.example.CompetitionOrganizer.model.Pair;
+import com.example.competition_organizer.dto.FighterResponseDto.Fighter;
+import com.example.competition_organizer.model.HitLocation;
+import com.example.competition_organizer.model.Pair;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class TournamentService {
 
@@ -24,29 +26,26 @@ public class TournamentService {
         this.locationService = locationService;
     }
 
-    public FighterResponseDto.Fighter organizerCompetition() {
-
-        List<FighterResponseDto.Fighter> allParticipantAndRunTournament = pairService.getAllParticipantAndRunTournament();
+    public Fighter organizerCompetition() {
+        List<Fighter> allParticipantAndRunTournament = pairService.getAllParticipantAndRunTournament();
         Collections.shuffle(allParticipantAndRunTournament);
-        FighterResponseDto.Fighter fighter = createFight(allParticipantAndRunTournament);
-        return fighter;
+        return createFight(allParticipantAndRunTournament);
     }
 
 
-    public FighterResponseDto.Fighter createFight(List<FighterResponseDto.Fighter> fighterList) {
-
-        List<FighterResponseDto.Fighter> fighters = new ArrayList<>(fighterList);
-        List<FighterResponseDto.Fighter> nextRound = new ArrayList<>();
+    public Fighter createFight(List<Fighter> fighterList) {
+        List<Fighter> fighters = new ArrayList<>(fighterList);
+        List<Fighter> nextRound = new ArrayList<>();
 
         for (int i = 0; i < fighters.size(); i += 2) {
             if (fighters.size() > 1) {
-                FighterResponseDto.Fighter fighterFirst = fighters.get(i);
-                FighterResponseDto.Fighter fighterSecond = (i + 1 < fighters.size()) ? fighters.get(i + 1) : null;
+                Fighter fighterFirst = fighters.get(i);
+                Fighter fighterSecond = (i + 1 < fighters.size()) ? fighters.get(i + 1) : null;
                 if (fighterSecond == null) {
                     // если нечётное число участников, 1 автоматически проходит
                     nextRound.add(fighterFirst);
                 } else {
-                    FighterResponseDto.Fighter winner = fight(fighterFirst, fighterSecond);
+                    Fighter winner = fight(fighterFirst, fighterSecond);
                     savePairInBaz(fighterFirst, fighterSecond, winner);
                     nextRound.add(winner);
                 }
@@ -54,15 +53,15 @@ public class TournamentService {
         }
         if (nextRound.size() == 1) {
             // Это последний победитель
-            return nextRound.get(0);
+            return nextRound.getFirst();
         } else {
             fighters = nextRound;
             return createFight(fighters);
         }
     }
 
-    public void savePairInBaz(FighterResponseDto.Fighter fighter, FighterResponseDto.Fighter
-            fighter1, FighterResponseDto.Fighter winner) {
+    public void savePairInBaz(Fighter fighter, Fighter
+            fighter1, Fighter winner) {
         Pair pair = Pair.builder()
                 .participantIdFirst(fighter.getId())
                 .participantIdSecond(fighter1.getId())
@@ -72,10 +71,8 @@ public class TournamentService {
     }
 
 
-    public FighterResponseDto.Fighter fight(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second) {
-
-        Random random = new Random();
-        FighterResponseDto.Fighter winner = null;
+    public Fighter fight(Fighter first, Fighter second) {
+        Fighter winner;
 
         while (true) {
             int powerFirst = random.nextInt(first.getPower() + 10);
@@ -86,61 +83,60 @@ public class TournamentService {
             if (dodgeChanceFirst < first.getDodgeChance()) {
                 int i = first.getHeilsFighters() - powerSecond;
                 first.setHeilsFighters(i);
-                System.out.println(first.getName() + " пропустил урон " + powerSecond + " осталоссь HP " + i);
+                log.info("{} пропустил урон {} осталоссь HP {}", first.getName(), powerSecond, i);
                 if (first.getHeilsFighters() <= 0) {
                     winner = second;
                     break;
                 }
             } else {
-                System.out.println(second.getName() + " промахнулся ");
+                log.info("{} промахнулся ", second.getName());
             }
 
             if (dodgeChanceSecond < second.getDodgeChance()) {
                 int i = second.getHeilsFighters() - powerFirst;
                 second.setHeilsFighters(i);
-                System.out.println(second.getName() + " пропустил урон " + powerFirst + " осталоссь HP " + i);
+                log.info("{} пропустил урон {} осталоссь HP {}", second.getName(), powerFirst, i);
                 if (second.getHeilsFighters() <= 0) {
                     winner = first;
                     break;
                 }
             } else {
-                System.out.println(first.getName() + " промахнулся ");
+                log.info("{} промахнулся ", first.getName());
             }
         }
         return winner;
     }
 
 
-    private boolean isAlive(FighterResponseDto.Fighter fighter) {
-        if (fighter.getHeilsFighters() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+    private boolean isAlive(Fighter fighter) {
+        return fighter.getHeilsFighters() > 0;
     }
 
-    private int hitDamage(FighterResponseDto.Fighter fighter, HitLocation hitLocation) {
+    private int hitDamage(Fighter fighter, HitLocation hitLocation) {
         int fighterPower = fighter.getPower();
         double damageMultiplier = hitLocation.getDamageMultiplier();
         return (int) (fighterPower * damageMultiplier);
     }
 
-    private boolean dodgeChance(FighterResponseDto.Fighter fighter) {
+    private boolean dodgeChance(Fighter fighter) {
         double randomDodgeChance = random.nextDouble(0, 2.0);
-        if (randomDodgeChance < fighter.getDodgeChance()) {
-            return true;
-        }
-        return false;
+        return randomDodgeChance < fighter.getDodgeChance();
     }
 
-    public FighterResponseDto.Fighter createFight2(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second, HitLocation hitLocation) {
-        FighterResponseDto.Fighter winner = null;
+    private HitLocation getRandomHitLocation() {
+        HitLocation[] locations = HitLocation.values();
+        return locations[random.nextInt(locations.length)];
+    }
+
+    public Fighter createFight2(Fighter first, Fighter second) {
+        Fighter winner = null;
         while (isAlive(first) && isAlive(second)) {
-            fight2(first, second, hitLocation);
-            fight2(second, first, hitLocation);
-            if (isAlive(first) == false) {
+            HitLocation randomHitLocation = getRandomHitLocation();
+            fight2(first, second, randomHitLocation);
+            fight2(second, first, randomHitLocation);
+            if (!isAlive(first)) {
                 winner = second;
-            } else if (isAlive(second) == false) {
+            } else if (!isAlive(second)) {
                 winner = first;
             }
         }
@@ -148,22 +144,19 @@ public class TournamentService {
     }
 
 
-    public void fight2(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second, HitLocation hitLocation) {
-
+    public void fight2(Fighter first, Fighter second, HitLocation hitLocation) {
         if (isAlive(first)) {
-            if (dodgeChance(first) == true) {
+            if (dodgeChance(first)) {
                 int damage = hitDamage(second, hitLocation);
                 int heils = first.getHeilsFighters() - damage;
                 first.setHeilsFighters(heils);
-            } else if (isAlive(first) == false) {
-                System.out.println(first.getName() + " Бить не может мертв");
+            } else if (!isAlive(first)) {
+                log.info("{} Бить не может мертв", first.getName());
             }
         } else {
-            System.out.println(second.getName() + " ударив в " + hitLocation.getDisplayName() + "промахнулся");
+            log.info("{} ударив в {}промахнулся", second.getName(), hitLocation.getDisplayName());
         }
-
     }
-
 }
 
 

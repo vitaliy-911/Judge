@@ -1,7 +1,7 @@
-package com.example.CompetitionOrganizer.config;
+package com.example.competition_organizer.config;
 
-import com.example.CompetitionOrganizer.model.Location;
-import com.example.CompetitionOrganizer.service.LocationService;
+import com.example.competition_organizer.model.Location;
+import com.example.competition_organizer.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class Initializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Location location =new Location();
+        Location location = new Location();
         location.setName("Витебск");
         locationService.createLocation(location);
 

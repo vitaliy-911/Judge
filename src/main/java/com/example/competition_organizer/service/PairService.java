@@ -1,9 +1,10 @@
-package com.example.CompetitionOrganizer.service;
+package com.example.competition_organizer.service;
 
 
-import com.example.CompetitionOrganizer.dto.FighterResponseDto;
-import com.example.CompetitionOrganizer.model.Pair;
-import com.example.CompetitionOrganizer.repozitory.PairRepository;
+import com.example.competition_organizer.dto.FighterResponseDto;
+import com.example.competition_organizer.dto.FighterResponseDto.Fighter;
+import com.example.competition_organizer.model.Pair;
+import com.example.competition_organizer.repozitory.PairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -11,14 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class PairService {
 
     @Value(value = "${fightClub.api.base-url}")
-    String REMOTE_FIGHTER_API_URL;
+    private String REMOTE_FIGHTER_API_URL;
 
     private final RestTemplate restTemplate;
     private final PairRepository pairRepository;
@@ -29,36 +29,35 @@ public class PairService {
         this.pairRepository = pairRepository;
     }
 
-    public List<FighterResponseDto.Fighter> getAllParticipantAndRunTournament() {
+    public List<Fighter> getAllParticipantAndRunTournament() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<String>("param", headers);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>("param", headers);
         try {
             ResponseEntity<FighterResponseDto> exchange = restTemplate.exchange(
                     REMOTE_FIGHTER_API_URL + "/api/fighter/getAll", HttpMethod.GET, entity,
                     FighterResponseDto.class);
 
             FighterResponseDto body = exchange.getBody();
-            List<FighterResponseDto.Fighter> fighters = body.getFighters();
 
-            return fighters;
+            return body.getFighters();
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при получении учасников с сервера");
         }
     }
 
-    public List<FighterResponseDto.Fighter> createPair(Long firstId, Long secondId) {
-        List<FighterResponseDto.Fighter> fighters = new ArrayList<>(2);
+    public List<Fighter> createPair(Long firstId, Long secondId) {
+        List<Fighter> fighters = new ArrayList<>(2);
 
-        List<FighterResponseDto.Fighter> fighterList = getAllParticipantAndRunTournament();
+        List<Fighter> fighterList = getAllParticipantAndRunTournament();
 
-        FighterResponseDto.Fighter first = fighterList.stream()
+        Fighter first = fighterList.stream()
                 .filter(fighter -> fighter.getId().equals(firstId))
                 .findFirst().orElse(null);
 
-        FighterResponseDto.Fighter second = fighterList.stream()
+        Fighter second = fighterList.stream()
                 .filter(fighter -> fighter.getId().equals(secondId))
                 .findFirst().orElse(null);
         fighters.add(first);
