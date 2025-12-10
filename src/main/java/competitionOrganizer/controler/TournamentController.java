@@ -1,10 +1,11 @@
-package com.example.CompetitionOrganizer.controler;
+package competitionOrganizer.controler;
 
-import com.example.CompetitionOrganizer.dto.FighterResponseDto;
-import com.example.CompetitionOrganizer.dto.PairDto;
-import com.example.CompetitionOrganizer.model.HitLocation;
-import com.example.CompetitionOrganizer.service.PairService;
-import com.example.CompetitionOrganizer.service.TournamentService;
+import competitionOrganizer.dto.FighterResponseDto;
+import competitionOrganizer.dto.PairDto;
+import competitionOrganizer.model.HitLocation;
+import competitionOrganizer.service.PairService;
+import competitionOrganizer.service.TournamentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/competition")
 public class TournamentController {
@@ -19,7 +21,6 @@ public class TournamentController {
     private final TournamentService competitionService;
     private final PairService pairService;
     private final TournamentService tournamentService;
-
 
     private List<FighterResponseDto.Fighter> fighterList = new ArrayList<>();
 
@@ -40,6 +41,12 @@ public class TournamentController {
         }
     }
 
+    @GetMapping("/getAllFighters")
+    public List<FighterResponseDto.Fighter> getFighterList() {
+        return pairService.getAllParticipantAndRunTournament();
+    }
+
+
     @PostMapping("/select-fighters")
     public List<FighterResponseDto.Fighter> selectFighters(@RequestBody PairDto pair) {
         List<FighterResponseDto.Fighter> fighters = pairService.createPair(pair.getFirstId(), pair.getSecondId());
@@ -52,9 +59,16 @@ public class TournamentController {
     public FighterResponseDto.Fighter attack(HitLocation hitLocation) {
         FighterResponseDto.Fighter fighter1 = fighterList.get(0);
         FighterResponseDto.Fighter fighter2 = fighterList.get(1);
-        FighterResponseDto.Fighter fighter = tournamentService.createFight2(fighter1, fighter2, hitLocation);
 
-        return fighter;
+        FighterResponseDto.Fighter victim = tournamentService.createFight2(fighter1, fighter2, hitLocation);
 
+        if (victim.getHeilsFighters() > 0) {
+            fighterList.set(0, victim);
+            fighterList.set(1, fighter1);
+        } else if (victim.getHeilsFighters() < 0) {
+            System.out.println("Победил " + fighter1.getName());
+            System.out.println("Выберите новых игроков");
+        }
+        return fighter1;
     }
 }

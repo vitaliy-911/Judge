@@ -1,7 +1,7 @@
-package com.example.CompetitionOrganizer.service;
+package competitionOrganizer.service;
 
-import com.example.CompetitionOrganizer.model.Location;
-import com.example.CompetitionOrganizer.repozitory.LocationRepository;
+import competitionOrganizer.model.Location;
+import competitionOrganizer.repozitory.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

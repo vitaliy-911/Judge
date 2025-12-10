@@ -1,10 +1,10 @@
-package com.example.CompetitionOrganizer.model;
+package competitionOrganizer.model;
 
 import lombok.Getter;
 
 @Getter
 public enum HitLocation {
-    HEAD("Голова",1.5),
+    HEAD("Голову",1.5),
     STOMACH("Туловище",1.0),
     LEGS("Ноги",0.7);
 

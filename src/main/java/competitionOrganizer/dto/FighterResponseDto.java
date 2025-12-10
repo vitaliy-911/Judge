@@ -1,10 +1,9 @@
-package com.example.CompetitionOrganizer.dto;
+package competitionOrganizer.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Getter
@@ -26,7 +25,6 @@ public class FighterResponseDto {
         private String beltColorFighter;
         private double dodgeChance;
         private int heilsFighters;
-
     }
 }
 

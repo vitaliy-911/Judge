@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.exception;
+package competitionOrganizer.exception;
 
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) {

@@ -1,8 +1,8 @@
-package com.example.CompetitionOrganizer.service;
+package competitionOrganizer.service;
 
-import com.example.CompetitionOrganizer.dto.FighterResponseDto;
-import com.example.CompetitionOrganizer.model.HitLocation;
-import com.example.CompetitionOrganizer.model.Pair;
+import competitionOrganizer.dto.FighterResponseDto;
+import competitionOrganizer.model.HitLocation;
+import competitionOrganizer.model.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +15,11 @@ import java.util.Random;
 public class TournamentService {
 
     private final PairService pairService;
-    private final LocationService locationService;
     private final Random random = new Random();
 
     @Autowired
-    public TournamentService(PairService pairService, LocationService locationService) {
+    public TournamentService(PairService pairService) {
         this.pairService = pairService;
-        this.locationService = locationService;
     }
 
     public FighterResponseDto.Fighter organizerCompetition() {
@@ -31,7 +29,6 @@ public class TournamentService {
         FighterResponseDto.Fighter fighter = createFight(allParticipantAndRunTournament);
         return fighter;
     }
-
 
     public FighterResponseDto.Fighter createFight(List<FighterResponseDto.Fighter> fighterList) {
 
@@ -71,7 +68,6 @@ public class TournamentService {
         pairService.savePair(pair);
     }
 
-
     public FighterResponseDto.Fighter fight(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second) {
 
         Random random = new Random();
@@ -110,15 +106,6 @@ public class TournamentService {
         return winner;
     }
 
-
-    private boolean isAlive(FighterResponseDto.Fighter fighter) {
-        if (fighter.getHeilsFighters() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private int hitDamage(FighterResponseDto.Fighter fighter, HitLocation hitLocation) {
         int fighterPower = fighter.getPower();
         double damageMultiplier = hitLocation.getDamageMultiplier();
@@ -126,7 +113,7 @@ public class TournamentService {
     }
 
     private boolean dodgeChance(FighterResponseDto.Fighter fighter) {
-        double randomDodgeChance = random.nextDouble(0, 2.0);
+        double randomDodgeChance = random.nextDouble(1.2, 3.0);
         if (randomDodgeChance < fighter.getDodgeChance()) {
             return true;
         }
@@ -134,34 +121,20 @@ public class TournamentService {
     }
 
     public FighterResponseDto.Fighter createFight2(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second, HitLocation hitLocation) {
-        FighterResponseDto.Fighter winner = null;
-        while (isAlive(first) && isAlive(second)) {
-            fight2(first, second, hitLocation);
-            fight2(second, first, hitLocation);
-            if (isAlive(first) == false) {
-                winner = second;
-            } else if (isAlive(second) == false) {
-                winner = first;
-            }
-        }
-        return winner;
+        return fight2(first, second, hitLocation);
     }
 
-
-    public void fight2(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second, HitLocation hitLocation) {
-
-        if (isAlive(first)) {
-            if (dodgeChance(first) == true) {
-                int damage = hitDamage(second, hitLocation);
-                int heils = first.getHeilsFighters() - damage;
-                first.setHeilsFighters(heils);
-            } else if (isAlive(first) == false) {
-                System.out.println(first.getName() + " Бить не может мертв");
-            }
+    public FighterResponseDto.Fighter fight2(FighterResponseDto.Fighter first, FighterResponseDto.Fighter second, HitLocation hitLocation) {
+        System.out.println("Бьет: " + first.getName());
+        if (dodgeChance(second) == true) {
+            int damage = hitDamage(first, hitLocation);
+            int heils = second.getHeilsFighters() - damage;
+            second.setHeilsFighters(heils);
+            System.out.println(second.getName() + " пропустил удар в " + hitLocation.getDisplayName() + " осталось HP " + second.getHeilsFighters());
         } else {
-            System.out.println(second.getName() + " ударив в " + hitLocation.getDisplayName() + "промахнулся");
+            System.out.println(first.getName() + " ударив в " + hitLocation.getDisplayName() + " промахнулся");
         }
-
+        return second;
     }
 
 }

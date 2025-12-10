@@ -1,7 +1,10 @@
-package com.example.CompetitionOrganizer.model;
+package competitionOrganizer.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @Getter
@@ -17,7 +20,5 @@ public class Location {
     private Long id;
 
     private String name;
-
-
 
 }

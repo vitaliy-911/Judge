@@ -1,6 +1,6 @@
-package com.example.CompetitionOrganizer.repozitory;
+package competitionOrganizer.repozitory;
 
-import com.example.CompetitionOrganizer.model.Pair;
+import competitionOrganizer.model.Pair;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.example.CompetitionOrganizer.exception;
+package competitionOrganizer.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,8 @@
-package com.example.CompetitionOrganizer.service;
+package competitionOrganizer.service;
 
-
-import com.example.CompetitionOrganizer.dto.FighterResponseDto;
-import com.example.CompetitionOrganizer.model.Pair;
-import com.example.CompetitionOrganizer.repozitory.PairRepository;
+import competitionOrganizer.dto.FighterResponseDto;
+import competitionOrganizer.model.Pair;
+import competitionOrganizer.repozitory.PairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -36,7 +35,7 @@ public class PairService {
         HttpEntity<String> entity = new HttpEntity<String>("param", headers);
         try {
             ResponseEntity<FighterResponseDto> exchange = restTemplate.exchange(
-                    REMOTE_FIGHTER_API_URL + "/api/fighter/getAll", HttpMethod.GET, entity,
+                    REMOTE_FIGHTER_API_URL + "/api/fighter/getAll" , HttpMethod.GET, entity,
                     FighterResponseDto.class);
 
             FighterResponseDto body = exchange.getBody();
