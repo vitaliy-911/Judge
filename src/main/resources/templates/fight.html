@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бой</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Бой</h1>
+
+        <div th:if="${param.error}" class="error-message" th:text="${param.error[0]}"></div>
+
+        <div th:if="${fight.fightOver}" class="fight-over">
+            <h2 class="winner">Победитель: <span th:text="${fight.winner.name}"></span></h2>
+            <p class="winner-info">Пояс: <span th:text="${fight.winner.beltColorFighter}"></span></p>
+        </div>
+
+        <div class="fighters-display">
+            <div class="fighter-box" th:classappend="${fight.currentAttacker.id == fight.fighter1.id ? 'current-attacker' : ''}">
+                <h2 th:text="${fight.fighter1.name}">Боец 1</h2>
+                <div class="fighter-stats">
+                    <p><strong>Пояс:</strong> <span th:text="${fight.fighter1.beltColorFighter}"></span></p>
+                    <p><strong>HP:</strong> <span th:text="${fight.fighter1.heilsFighters}"></span></p>
+                    <p><strong>Сила:</strong> <span th:text="${fight.fighter1.power}"></span></p>
+                    <p><strong>Уклонение:</strong> <span th:text="${#numbers.formatDecimal(fight.fighter1.dodgeChance, 1, 2)}"></span></p>
+                </div>
+                <div class="hp-bar">
+                    <div class="hp-fill" th:style="'width: ' + ${fight.fighter1InitialHp > 0 ? (fight.fighter1.heilsFighters * 100 / fight.fighter1InitialHp) : 0} + '%'"></div>
+                </div>
+            </div>
+
+            <div class="vs">VS</div>
+
+            <div class="fighter-box" th:classappend="${fight.currentAttacker.id == fight.fighter2.id ? 'current-attacker' : ''}">
+                <h2 th:text="${fight.fighter2.name}">Боец 2</h2>
+                <div class="fighter-stats">
+                    <p><strong>Пояс:</strong> <span th:text="${fight.fighter2.beltColorFighter}"></span></p>
+                    <p><strong>HP:</strong> <span th:text="${fight.fighter2.heilsFighters}"></span></p>
+                    <p><strong>Сила:</strong> <span th:text="${fight.fighter2.power}"></span></p>
+                    <p><strong>Уклонение:</strong> <span th:text="${#numbers.formatDecimal(fight.fighter2.dodgeChance, 1, 2)}"></span></p>
+                </div>
+                <div class="hp-bar">
+                    <div class="hp-fill" th:style="'width: ' + ${fight.fighter2InitialHp > 0 ? (fight.fighter2.heilsFighters * 100 / fight.fighter2InitialHp) : 0} + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="location-image">
+            <div class="image-placeholder">
+                <p>Картинка локации</p>
+                <p class="placeholder-note">(Картинка будет добавлена позже)</p>
+            </div>
+        </div>
+
+        <div class="fight-controls" th:if="${!fight.fightOver}">
+            <div class="current-turn">
+                <p>Ход: <strong th:text="${fight.currentAttacker.name}"></strong></p>
+            </div>
+
+            <form th:action="@{/fight/hit}" method="post" class="hit-form">
+                <div class="hit-location-buttons">
+                    <button type="submit" 
+                            name="hitLocation" 
+                            value="HEAD" 
+                            class="btn btn-hit btn-location"
+                            th:disabled="${fight.fightOver}">
+                        Удар в Голову
+                    </button>
+                    <button type="submit" 
+                            name="hitLocation" 
+                            value="STOMACH" 
+                            class="btn btn-hit btn-location"
+                            th:disabled="${fight.fightOver}">
+                        Удар в Туловище
+                    </button>
+                    <button type="submit" 
+                            name="hitLocation" 
+                            value="LEGS" 
+                            class="btn btn-hit btn-location"
+                            th:disabled="${fight.fightOver}">
+                        Удар в Ноги
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="fight-log">
+            <h3>Лог боя</h3>
+            <div class="log-content">
+                <div th:each="logEntry : ${fight.fightLog}" class="log-entry" th:text="${logEntry}"></div>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/}" class="btn btn-secondary">Вернуться к выбору бойцов</a>
+        </div>
+    </div>
+</body>
+</html>
+

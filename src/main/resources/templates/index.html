@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор бойцов</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Выбор бойцов для боя</h1>
+        
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <div th:if="${param.error}" class="error-message" th:text="${param.error[0]}"></div>
+
+        <form th:action="@{/fight/start}" method="post" id="fightForm">
+            <div class="fighters-grid">
+                <div th:each="fighter : ${fighters}" class="fighter-card">
+                    <div class="fighter-info">
+                        <h3 th:text="${fighter.name}">Имя бойца</h3>
+                        <div class="fighter-details">
+                            <p><strong>ID:</strong> <span th:text="${fighter.id}"></span></p>
+                            <p><strong>Возраст:</strong> <span th:text="${fighter.age}"></span></p>
+                            <p><strong>Сила:</strong> <span th:text="${fighter.power}"></span></p>
+                            <p><strong>Пояс:</strong> <span th:text="${fighter.beltColorFighter}"></span></p>
+                            <p><strong>Шанс уклонения:</strong> <span th:text="${#numbers.formatDecimal(fighter.dodgeChance, 1, 2)}"></span></p>
+                            <p><strong>HP:</strong> <span th:text="${fighter.heilsFighters}"></span></p>
+                        </div>
+                    </div>
+                    <div class="fighter-selection">
+                        <input type="radio" 
+                               name="fighter1Id" 
+                               th:id="'fighter1_' + ${fighter.id}"
+                               th:value="${fighter.id}"
+                               class="fighter-radio">
+                        <label th:for="'fighter1_' + ${fighter.id}" class="btn btn-select btn-select-1">
+                            Выбрать как 1-го
+                        </label>
+                        <input type="radio" 
+                               name="fighter2Id" 
+                               th:id="'fighter2_' + ${fighter.id}"
+                               th:value="${fighter.id}"
+                               class="fighter-radio">
+                        <label th:for="'fighter2_' + ${fighter.id}" class="btn btn-select btn-select-2">
+                            Выбрать как 2-го
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="selection-info">
+                <p>Выберите двух бойцов: один как первый боец, другой как второй боец</p>
+                <p id="selectedFighters">Выбрано: 0 бойцов</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="startFightBtn" disabled>Начать бой</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('fightForm');
+        const radios1 = document.querySelectorAll('input[name="fighter1Id"]');
+        const radios2 = document.querySelectorAll('input[name="fighter2Id"]');
+        const selectedInfo = document.getElementById('selectedFighters');
+        const startBtn = document.getElementById('startFightBtn');
+
+        function updateSelection() {
+            const selected1 = document.querySelector('input[name="fighter1Id"]:checked');
+            const selected2 = document.querySelector('input[name="fighter2Id"]:checked');
+            
+            let count = 0;
+            if (selected1) count++;
+            if (selected2) count++;
+            
+            selectedInfo.textContent = 'Выбрано: ' + count + ' бойцов';
+            
+            if (selected1 && selected2 && selected1.value !== selected2.value) {
+                startBtn.disabled = false;
+            } else {
+                startBtn.disabled = true;
+            }
+        }
+
+        radios1.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    radios2.forEach(r => {
+                        if (r.value === this.value) {
+                            r.disabled = true;
+                        } else {
+                            r.disabled = false;
+                        }
+                    });
+                }
+                updateSelection();
+            });
+        });
+
+        radios2.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    radios1.forEach(r => {
+                        if (r.value === this.value) {
+                            r.disabled = true;
+                        } else {
+                            r.disabled = false;
+                        }
+                    });
+                }
+                updateSelection();
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            const selected1 = document.querySelector('input[name="fighter1Id"]:checked');
+            const selected2 = document.querySelector('input[name="fighter2Id"]:checked');
+            
+            if (!selected1 || !selected2 || selected1.value === selected2.value) {
+                e.preventDefault();
+                alert('Пожалуйста, выберите двух разных бойцов');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
+

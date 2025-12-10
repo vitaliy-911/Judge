@@ -1,6 +1,7 @@
 package com.example.competition_organizer.service;
 
 import com.example.competition_organizer.dto.FighterResponseDto.Fighter;
+import com.example.competition_organizer.model.FightState;
 import com.example.competition_organizer.model.HitLocation;
 import com.example.competition_organizer.model.Pair;
 import lombok.extern.slf4j.Slf4j;
@@ -108,17 +109,17 @@ public class TournamentService {
     }
 
 
-    private boolean isAlive(Fighter fighter) {
+    public boolean isAlive(Fighter fighter) {
         return fighter.getHeilsFighters() > 0;
     }
 
-    private int hitDamage(Fighter fighter, HitLocation hitLocation) {
+    public int hitDamage(Fighter fighter, HitLocation hitLocation) {
         int fighterPower = fighter.getPower();
         double damageMultiplier = hitLocation.getDamageMultiplier();
         return (int) (fighterPower * damageMultiplier);
     }
 
-    private boolean dodgeChance(Fighter fighter) {
+    public boolean dodgeChance(Fighter fighter) {
         double randomDodgeChance = random.nextDouble(0, 2.0);
         return randomDodgeChance < fighter.getDodgeChance();
     }
@@ -156,6 +157,68 @@ public class TournamentService {
         } else {
             log.info("{} ударив в {}промахнулся", second.getName(), hitLocation.getDisplayName());
         }
+    }
+
+    /**
+     * Выполняет удар атакующего бойца по защищающемуся с указанной локацией
+     * @param fightState состояние боя
+     * @param hitLocation место удара
+     * @return строка с описанием результата удара
+     */
+    public String performHit(FightState fightState, HitLocation hitLocation) {
+        Fighter attacker = fightState.getCurrentAttacker();
+        Fighter defender = fightState.getDefender();
+
+        if (!isAlive(attacker)) {
+            String message = attacker.getName() + " не может бить - мертв";
+            fightState.addLogEntry(message);
+            return message;
+        }
+
+        if (!isAlive(defender)) {
+            String message = defender.getName() + " уже побежден";
+            fightState.addLogEntry(message);
+            return message;
+        }
+
+        // Проверка уклонения защищающегося
+        if (dodgeChance(defender)) {
+            // Защищающийся уклоняется
+            String message = defender.getName() + " успешно уклонился от удара " + attacker.getName() + " в " + hitLocation.getDisplayName();
+            fightState.addLogEntry(message);
+            return message;
+        } else {
+            // Удар попадает
+            int damage = hitDamage(attacker, hitLocation);
+            int newHp = defender.getHeilsFighters() - damage;
+            defender.setHeilsFighters(Math.max(0, newHp));
+            
+            String message = attacker.getName() + " ударил " + defender.getName() + " в " + hitLocation.getDisplayName() + 
+                    " на " + damage + " урона. У " + defender.getName() + " осталось " + defender.getHeilsFighters() + " HP";
+            fightState.addLogEntry(message);
+
+            // Проверка окончания боя
+            if (defender.getHeilsFighters() <= 0) {
+                fightState.setFightOver(true);
+                fightState.setWinner(attacker);
+                String winMessage = attacker.getName() + " побеждает! Бой окончен.";
+                fightState.addLogEntry(winMessage);
+            }
+
+            return message;
+        }
+    }
+
+    /**
+     * Проверяет, закончен ли бой
+     * @param fightState состояние боя
+     * @return true если бой окончен
+     */
+    public boolean isFightOver(FightState fightState) {
+        if (fightState.isFightOver()) {
+            return true;
+        }
+        return !isAlive(fightState.getFighter1()) || !isAlive(fightState.getFighter2());
     }
 }
 
