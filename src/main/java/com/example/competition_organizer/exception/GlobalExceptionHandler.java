@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/example/competition_organizer/exception/GlobalExceptionHandler.java
 package com.example.competition_organizer.exception;
+========
+package competitionOrganizer.exception;
+>>>>>>>> upstream/main:src/main/java/competitionOrganizer/exception/GlobalExceptionHandler.java
 
 import lombok.Getter;
 import lombok.Setter;

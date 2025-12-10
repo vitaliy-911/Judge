@@ -1,7 +1,14 @@
+<<<<<<<< HEAD:src/main/java/com/example/competition_organizer/controler/LocationController.java
 package com.example.competition_organizer.controler;
 
 import com.example.competition_organizer.model.Location;
 import com.example.competition_organizer.service.LocationService;
+========
+package competitionOrganizer.controler;
+
+import competitionOrganizer.model.Location;
+import competitionOrganizer.service.LocationService;
+>>>>>>>> upstream/main:src/main/java/competitionOrganizer/controler/LocationController.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

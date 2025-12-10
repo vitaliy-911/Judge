@@ -1,10 +1,13 @@
+<<<<<<<< HEAD:src/main/java/com/example/competition_organizer/dto/FighterResponseDto.java
 package com.example.competition_organizer.dto;
+========
+package competitionOrganizer.dto;
+>>>>>>>> upstream/main:src/main/java/competitionOrganizer/dto/FighterResponseDto.java
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Getter
@@ -26,7 +29,6 @@ public class FighterResponseDto {
         private String beltColorFighter;
         private double dodgeChance;
         private int heilsFighters;
-
     }
 }
 

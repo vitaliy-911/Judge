@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/example/competition_organizer/model/Pair.java
 package com.example.competition_organizer.model;
+========
+package competitionOrganizer.model;
+>>>>>>>> upstream/main:src/main/java/competitionOrganizer/model/Pair.java
 
 import jakarta.persistence.*;
 import lombok.*;

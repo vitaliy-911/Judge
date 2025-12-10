@@ -1,7 +1,14 @@
+<<<<<<<< HEAD:src/main/java/com/example/competition_organizer/service/LocationService.java
 package com.example.competition_organizer.service;
 
 import com.example.competition_organizer.model.Location;
 import com.example.competition_organizer.repozitory.LocationRepository;
+========
+package competitionOrganizer.service;
+
+import competitionOrganizer.model.Location;
+import competitionOrganizer.repozitory.LocationRepository;
+>>>>>>>> upstream/main:src/main/java/competitionOrganizer/service/LocationService.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
