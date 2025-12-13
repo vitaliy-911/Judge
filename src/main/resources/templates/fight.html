@@ -174,92 +174,93 @@
     </style>
 </head>
 <body>
-    <h1>Бой</h1>
-    
-    <div th:if="${fightState.fightFinished}" class="winner-message">
-        Победил: <span th:text="${fightState.winner != null ? fightState.winner.name : fightState.fighter1.name}"></span>!
-    </div>
-    
-    <div class="fight-container">
-        <div class="fighter-panel" th:classappend="${!fightState.fightFinished && isFighter1Turn ? 'current-turn' : ''}">
-            <h2 th:text="${fightState.fighter1.name}">Боец 1</h2>
-            <div class="fighter-info">
-                <strong>HP:</strong> <span th:text="${fightState.fighter1.heilsFighters}"></span>
-            </div>
-            <div class="hp-bar">
-                <div class="hp-fill" 
-                     th:classappend="${fightState.fighter1.heilsFighters <= 30 ? 'low' : (fightState.fighter1.heilsFighters <= 60 ? 'medium' : '')}"
-                     th:style="'width: ' + ${fightState.fighter1.heilsFighters} + '%;'"
-                     th:text="${fightState.fighter1.heilsFighters}"></div>
-            </div>
-            <div class="fighter-info">
-                <strong>Сила:</strong> <span th:text="${fightState.fighter1.power}"></span>
-            </div>
-            <div class="fighter-info">
-                <strong>Шанс уклонения:</strong> <span th:text="${#numbers.formatDecimal(fightState.fighter1.dodgeChance, 1, 2)}"></span>
-            </div>
+<h1>Бой</h1>
+
+<div th:if="${fightState.fightFinished}" class="winner-message">
+    Победил: <span th:text="${fightState.winner != null ? fightState.winner.name : fightState.fighter1.name}"></span>!
+</div>
+
+<div class="fight-container">
+    <div class="fighter-panel" th:classappend="${!fightState.fightFinished && isFighter1Turn ? 'current-turn' : ''}">
+        <h2 th:text="${fightState.fighter1.name}">Боец 1</h2>
+        <div class="fighter-info">
+            <strong>HP:</strong> <span th:text="${fightState.fighter1.heilsFighters}"></span>
         </div>
-        
-        <div class="fighter-panel" th:classappend="${!fightState.fightFinished && !isFighter1Turn ? 'current-turn' : ''}">
-            <h2 th:text="${fightState.fighter2.name}">Боец 2</h2>
-            <div class="fighter-info">
-                <strong>HP:</strong> <span th:text="${fightState.fighter2.heilsFighters}"></span>
-            </div>
-            <div class="hp-bar">
-                <div class="hp-fill" 
-                     th:classappend="${fightState.fighter2.heilsFighters <= 30 ? 'low' : (fightState.fighter2.heilsFighters <= 60 ? 'medium' : '')}"
-                     th:style="'width: ' + ${fightState.fighter2.heilsFighters} + '%;'"
-                     th:text="${fightState.fighter2.heilsFighters}"></div>
-            </div>
-            <div class="fighter-info">
-                <strong>Сила:</strong> <span th:text="${fightState.fighter2.power}"></span>
-            </div>
-            <div class="fighter-info">
-                <strong>Шанс уклонения:</strong> <span th:text="${#numbers.formatDecimal(fightState.fighter2.dodgeChance, 1, 2)}"></span>
-            </div>
+        <div class="hp-bar">
+            <div class="hp-fill"
+                 th:classappend="${fightState.fighter1.heilsFighters <= 30 ? 'low' : (fightState.fighter1.heilsFighters <= 60 ? 'medium' : '')}"
+                 th:style="'width: ' + ${fightState.fighter1.heilsFighters} + '%;'"
+                 th:text="${fightState.fighter1.heilsFighters}"></div>
+        </div>
+        <div class="fighter-info">
+            <strong>Сила:</strong> <span th:text="${fightState.fighter1.power}"></span>
+        </div>
+        <div class="fighter-info">
+            <strong>Шанс уклонения:</strong> <span
+                th:text="${#numbers.formatDecimal(fightState.fighter1.dodgeChance, 1, 2)}"></span>
         </div>
     </div>
-    
-    <div class="location-image">
-        <div class="location-placeholder">
-            Картинка локации (пока не подключена)
+
+    <div class="fighter-panel" th:classappend="${!fightState.fightFinished && !isFighter1Turn ? 'current-turn' : ''}">
+        <h2 th:text="${fightState.fighter2.name}">Боец 2</h2>
+        <div class="fighter-info">
+            <strong>HP:</strong> <span th:text="${fightState.fighter2.heilsFighters}"></span>
+        </div>
+        <div class="hp-bar">
+            <div class="hp-fill"
+                 th:classappend="${fightState.fighter2.heilsFighters <= 30 ? 'low' : (fightState.fighter2.heilsFighters <= 60 ? 'medium' : '')}"
+                 th:style="'width: ' + ${fightState.fighter2.heilsFighters} + '%;'"
+                 th:text="${fightState.fighter2.heilsFighters}"></div>
+        </div>
+        <div class="fighter-info">
+            <strong>Сила:</strong> <span th:text="${fightState.fighter2.power}"></span>
+        </div>
+        <div class="fighter-info">
+            <strong>Шанс уклонения:</strong> <span
+                th:text="${#numbers.formatDecimal(fightState.fighter2.dodgeChance, 1, 2)}"></span>
         </div>
     </div>
-    
-    <div class="attack-section" th:if="${!fightState.fightFinished}">
-        <h3 style="text-align: center;">Выберите место удара</h3>
-        <div class="hit-location-buttons">
-            <form method="post" action="/fight/attack" style="display: inline;">
-                <input type="hidden" name="hitLocation" value="HEAD">
-                <button type="submit" class="hit-location-btn">Голова</button>
-            </form>
-            <form method="post" action="/fight/attack" style="display: inline;">
-                <input type="hidden" name="hitLocation" value="STOMACH">
-                <button type="submit" class="hit-location-btn">Туловище</button>
-            </form>
-            <form method="post" action="/fight/attack" style="display: inline;">
-                <input type="hidden" name="hitLocation" value="LEGS">
-                <button type="submit" class="hit-location-btn">Ноги</button>
-            </form>
-        </div>
+</div>
+
+<div class="location-image">
+    <img alt="Mortal Kombat" data-width="1920"
+         src="https://img.goodfon.ru/original/1920x1080/6/cc/mortal-kombat-smertelnaya-7771.jpg" width="100%">
+</div>
+
+<div class="attack-section" th:if="${!fightState.fightFinished}">
+    <h3 style="text-align: center;">Выберите место удара</h3>
+    <div class="hit-location-buttons">
+        <form method="post" action="/fight/attack" style="display: inline;">
+            <input type="hidden" name="hitLocation" value="HEAD">
+            <button type="submit" class="hit-location-btn">Голова</button>
+        </form>
+        <form method="post" action="/fight/attack" style="display: inline;">
+            <input type="hidden" name="hitLocation" value="STOMACH">
+            <button type="submit" class="hit-location-btn">Туловище</button>
+        </form>
+        <form method="post" action="/fight/attack" style="display: inline;">
+            <input type="hidden" name="hitLocation" value="LEGS">
+            <button type="submit" class="hit-location-btn">Ноги</button>
+        </form>
     </div>
-    
-    <div class="fight-log">
-        <h3>Лог боя</h3>
-        <div th:each="logEntry : ${fightState.fightLog}" class="log-entry" th:text="${logEntry}"></div>
-    </div>
-    
-    <div style="text-align: center;">
-        <a href="/" class="back-btn">Выбрать новых бойцов</a>
-    </div>
-    
-    <script>
-        // Автопрокрутка лога вниз
-        const logContainer = document.querySelector('.fight-log');
-        if (logContainer) {
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-    </script>
+</div>
+
+<div class="fight-log">
+    <h3>Лог боя</h3>
+    <div th:each="logEntry : ${fightState.fightLog}" class="log-entry" th:text="${logEntry}"></div>
+</div>
+
+<div style="text-align: center;">
+    <a href="/" class="back-btn">Выбрать новых бойцов</a>
+</div>
+
+<script>
+    // Автопрокрутка лога вниз
+    const logContainer = document.querySelector('.fight-log');
+    if (logContainer) {
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+</script>
 </body>
 </html>
 

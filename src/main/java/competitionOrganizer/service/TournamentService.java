@@ -147,7 +147,7 @@ public class TournamentService {
             int newHp = victim.getHeilsFighters() - damage;
             victim.setHeilsFighters(newHp);
             logMessage = victim.getName() + " пропустил удар в " + hitLocation.getDisplayName() + 
-                        ", нанесено " + damage + " урона. У " + victim.getName() + " осталось " + newHp + " HP";
+                        ", нанесено " + damage + " осталось " + newHp + " HP";
         } else {
             logMessage = attacker.getName() + " ударив в " + hitLocation.getDisplayName() + " промахнулся";
         }

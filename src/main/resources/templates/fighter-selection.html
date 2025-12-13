@@ -13,7 +13,7 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d0d10 0%, #764ba2 100%);
             min-height: 100vh;
         }
         h1 {
@@ -30,7 +30,7 @@
             margin-bottom: 40px;
         }
         .fighter-card {
-            background: white;
+            background: #009688;
             border: 3px solid #ddd;
             border-radius: 12px;
             padding: 20px;
@@ -228,15 +228,20 @@
     </style>
 </head>
 <body>
-    <h1>Выбор бойцов для боя</h1>
-    
+
+
+<h1>Выбор бойцов для боя</h1>
+<div>
+    <img alt="глаза, маска, Скорпион, Mortal Kombat 11" data-width="1920"
+         src="https://img.goodfon.ru/original/1920x1080/6/b1/mortal-kombat-11-skorpion-maska-glaza.jpg" width="100%">
     <div th:if="${error}" class="error" th:text="${error}"></div>
-    
+
     <form id="selectionForm" method="post" action="/start-fight">
         <input type="hidden" name="firstId" id="firstIdInput">
         <input type="hidden" name="secondId" id="secondIdInput">
-        
+
         <div class="fighters-container">
+
             <div th:each="fighter : ${fighters}" class="fighter-card" th:attr="data-fighter-id=${fighter.id}">
                 <h3>
                     <span th:text="${fighter.name}">Имя бойца</span>
@@ -244,169 +249,172 @@
                     <span class="badge second" style="display: none;" id="badge-second-${fighter.id}">Боец 2</span>
                 </h3>
                 <div class="fighter-info">
-                    <strong>Возраст:</strong> 
+                    <strong>Возраст:</strong>
                     <span th:text="${fighter.age}"></span>
                 </div>
                 <div class="fighter-info">
-                    <strong>Сила:</strong> 
+                    <strong>Сила:</strong>
                     <span th:text="${fighter.power}"></span>
                 </div>
                 <div class="fighter-info">
-                    <strong>Пояс:</strong> 
+                    <strong>Пояс:</strong>
                     <span th:text="${fighter.beltColorFighter}"></span>
                 </div>
                 <div class="fighter-info">
-                    <strong>Шанс уклонения:</strong> 
+                    <strong>Шанс уклонения:</strong>
                     <span th:text="${#numbers.formatDecimal(fighter.dodgeChance, 1, 2)}"></span>
                 </div>
                 <div class="fighter-info">
-                    <strong>HP:</strong> 
+                    <strong>HP:</strong>
                     <span th:text="${fighter.heilsFighters}"></span>
                 </div>
                 <div class="fighter-buttons">
-                    <button type="button" class="select-btn first" th:attr="data-fighter-id=${fighter.id}" onclick="selectFighter(this, 'first')">
+                    <button type="button" class="select-btn first" th:attr="data-fighter-id=${fighter.id}"
+                            onclick="selectFighter(this, 'first')">
                         Выбрать как Боец 1
                     </button>
-                    <button type="button" class="select-btn second" th:attr="data-fighter-id=${fighter.id}" onclick="selectFighter(this, 'second')">
+                    <button type="button" class="select-btn second" th:attr="data-fighter-id=${fighter.id}"
+                            onclick="selectFighter(this, 'second')">
                         Выбрать как Боец 2
                     </button>
                 </div>
             </div>
         </div>
-        
+
         <div class="selection-form">
             <div class="selected-fighters">
                 <h3>Выбранные бойцы:</h3>
                 <div class="selected-fighter-item">
-                    <strong>Боец 1:</strong> 
+                    <strong>Боец 1:</strong>
                     <span id="selectedFirst">Не выбран</span>
                 </div>
                 <div class="selected-fighter-item">
-                    <strong>Боец 2:</strong> 
+                    <strong>Боец 2:</strong>
                     <span id="selectedSecond">Не выбран</span>
                 </div>
             </div>
             <button type="submit" class="start-fight-btn" id="startFightBtn" disabled>Начать бой</button>
         </div>
     </form>
-    
-    <script>
-        // Собираем информацию о бойцах из DOM
-        function getFightersData() {
-            const fighters = [];
-            document.querySelectorAll('.fighter-card').forEach(card => {
-                const id = parseInt(card.getAttribute('data-fighter-id'));
-                const name = card.querySelector('h3 span').textContent.trim();
-                fighters.push({ id: id, name: name });
-            });
-            return fighters;
+</div>
+
+<script>
+    // Собираем информацию о бойцах из DOM
+    function getFightersData() {
+        const fighters = [];
+        document.querySelectorAll('.fighter-card').forEach(card => {
+            const id = parseInt(card.getAttribute('data-fighter-id'));
+            const name = card.querySelector('h3 span').textContent.trim();
+            fighters.push({ id: id, name: name });
+        });
+        return fighters;
+    }
+
+    const fighters = getFightersData();
+
+    let selectedFirstId = null;
+    let selectedSecondId = null;
+
+    function selectFighter(button, position) {
+        const fighterIdStr = button.getAttribute('data-fighter-id');
+        const fighterId = parseInt(fighterIdStr);
+
+        if (isNaN(fighterId)) {
+            console.error('Не удалось получить ID бойца');
+            return;
         }
-        
-        const fighters = getFightersData();
-        
-        let selectedFirstId = null;
-        let selectedSecondId = null;
-        
-        function selectFighter(button, position) {
-            const fighterIdStr = button.getAttribute('data-fighter-id');
-            const fighterId = parseInt(fighterIdStr);
-            
-            if (isNaN(fighterId)) {
-                console.error('Не удалось получить ID бойца');
-                return;
+
+        // Получаем имя бойца из карточки
+        const card = button.closest('.fighter-card');
+        const fighterName = card.querySelector('h3 span').textContent.trim();
+
+        if (position === 'first') {
+            // Снимаем выделение с предыдущего первого бойца
+            if (selectedFirstId) {
+                const prevCard = document.querySelector(`[data-fighter-id="${selectedFirstId}"]`);
+                if (prevCard) {
+                    prevCard.classList.remove('selected-first');
+                    const prevBadge = prevCard.querySelector('#badge-first-' + selectedFirstId);
+                    if (prevBadge) prevBadge.style.display = 'none';
+                    const prevButtons = prevCard.querySelectorAll('.select-btn.first');
+                    prevButtons.forEach(btn => btn.classList.remove('selected'));
+                }
             }
-            
-            // Получаем имя бойца из карточки
-            const card = button.closest('.fighter-card');
-            const fighterName = card.querySelector('h3 span').textContent.trim();
-            
-            if (position === 'first') {
-                // Снимаем выделение с предыдущего первого бойца
-                if (selectedFirstId) {
-                    const prevCard = document.querySelector(`[data-fighter-id="${selectedFirstId}"]`);
-                    if (prevCard) {
-                        prevCard.classList.remove('selected-first');
-                        const prevBadge = prevCard.querySelector('#badge-first-' + selectedFirstId);
-                        if (prevBadge) prevBadge.style.display = 'none';
-                        const prevButtons = prevCard.querySelectorAll('.select-btn.first');
-                        prevButtons.forEach(btn => btn.classList.remove('selected'));
-                    }
-                }
-                
-                // Если тот же боец выбран как второй, снимаем выбор второго
-                if (selectedSecondId == fighterId) {
-                    selectedSecondId = null;
-                    card.classList.remove('selected-second');
-                    const badge = card.querySelector('#badge-second-' + fighterId);
-                    if (badge) badge.style.display = 'none';
-                    const secondButtons = card.querySelectorAll('.select-btn.second');
-                    secondButtons.forEach(btn => btn.classList.remove('selected'));
-                    const selectedSecondEl = document.getElementById('selectedSecond');
-                    if (selectedSecondEl) selectedSecondEl.textContent = 'Не выбран';
-                    const secondIdInput = document.getElementById('secondIdInput');
-                    if (secondIdInput) secondIdInput.value = '';
-                }
-                
-                selectedFirstId = fighterId;
-                card.classList.add('selected-first');
-                const badge = card.querySelector('#badge-first-' + fighterId);
-                if (badge) badge.style.display = 'inline-block';
-                button.classList.add('selected');
-                
-                const selectedFirstEl = document.getElementById('selectedFirst');
-                if (selectedFirstEl) selectedFirstEl.textContent = fighterName;
-                const firstIdInput = document.getElementById('firstIdInput');
-                if (firstIdInput) firstIdInput.value = fighterId;
-            } else {
-                // Снимаем выделение с предыдущего второго бойца
-                if (selectedSecondId) {
-                    const prevCard = document.querySelector(`[data-fighter-id="${selectedSecondId}"]`);
-                    if (prevCard) {
-                        prevCard.classList.remove('selected-second');
-                        const prevBadge = prevCard.querySelector('#badge-second-' + selectedSecondId);
-                        if (prevBadge) prevBadge.style.display = 'none';
-                        const prevButtons = prevCard.querySelectorAll('.select-btn.second');
-                        prevButtons.forEach(btn => btn.classList.remove('selected'));
-                    }
-                }
-                
-                // Если тот же боец выбран как первый, снимаем выбор первого
-                if (selectedFirstId == fighterId) {
-                    selectedFirstId = null;
-                    card.classList.remove('selected-first');
-                    const badge = card.querySelector('#badge-first-' + fighterId);
-                    if (badge) badge.style.display = 'none';
-                    const firstButtons = card.querySelectorAll('.select-btn.first');
-                    firstButtons.forEach(btn => btn.classList.remove('selected'));
-                    const selectedFirstEl = document.getElementById('selectedFirst');
-                    if (selectedFirstEl) selectedFirstEl.textContent = 'Не выбран';
-                    const firstIdInput = document.getElementById('firstIdInput');
-                    if (firstIdInput) firstIdInput.value = '';
-                }
-                
-                selectedSecondId = fighterId;
-                card.classList.add('selected-second');
+
+            // Если тот же боец выбран как второй, снимаем выбор второго
+            if (selectedSecondId == fighterId) {
+                selectedSecondId = null;
+                card.classList.remove('selected-second');
                 const badge = card.querySelector('#badge-second-' + fighterId);
-                if (badge) badge.style.display = 'inline-block';
-                button.classList.add('selected');
-                
+                if (badge) badge.style.display = 'none';
+                const secondButtons = card.querySelectorAll('.select-btn.second');
+                secondButtons.forEach(btn => btn.classList.remove('selected'));
                 const selectedSecondEl = document.getElementById('selectedSecond');
-                if (selectedSecondEl) selectedSecondEl.textContent = fighterName;
+                if (selectedSecondEl) selectedSecondEl.textContent = 'Не выбран';
                 const secondIdInput = document.getElementById('secondIdInput');
-                if (secondIdInput) secondIdInput.value = fighterId;
+                if (secondIdInput) secondIdInput.value = '';
             }
-            
-            // Проверяем, можно ли начать бой
-            const startBtn = document.getElementById('startFightBtn');
-            if (startBtn) {
-                if (selectedFirstId && selectedSecondId && selectedFirstId !== selectedSecondId) {
-                    startBtn.disabled = false;
-                } else {
-                    startBtn.disabled = true;
+
+            selectedFirstId = fighterId;
+            card.classList.add('selected-first');
+            const badge = card.querySelector('#badge-first-' + fighterId);
+            if (badge) badge.style.display = 'inline-block';
+            button.classList.add('selected');
+
+            const selectedFirstEl = document.getElementById('selectedFirst');
+            if (selectedFirstEl) selectedFirstEl.textContent = fighterName;
+            const firstIdInput = document.getElementById('firstIdInput');
+            if (firstIdInput) firstIdInput.value = fighterId;
+        } else {
+            // Снимаем выделение с предыдущего второго бойца
+            if (selectedSecondId) {
+                const prevCard = document.querySelector(`[data-fighter-id="${selectedSecondId}"]`);
+                if (prevCard) {
+                    prevCard.classList.remove('selected-second');
+                    const prevBadge = prevCard.querySelector('#badge-second-' + selectedSecondId);
+                    if (prevBadge) prevBadge.style.display = 'none';
+                    const prevButtons = prevCard.querySelectorAll('.select-btn.second');
+                    prevButtons.forEach(btn => btn.classList.remove('selected'));
                 }
             }
+
+            // Если тот же боец выбран как первый, снимаем выбор первого
+            if (selectedFirstId == fighterId) {
+                selectedFirstId = null;
+                card.classList.remove('selected-first');
+                const badge = card.querySelector('#badge-first-' + fighterId);
+                if (badge) badge.style.display = 'none';
+                const firstButtons = card.querySelectorAll('.select-btn.first');
+                firstButtons.forEach(btn => btn.classList.remove('selected'));
+                const selectedFirstEl = document.getElementById('selectedFirst');
+                if (selectedFirstEl) selectedFirstEl.textContent = 'Не выбран';
+                const firstIdInput = document.getElementById('firstIdInput');
+                if (firstIdInput) firstIdInput.value = '';
+            }
+
+            selectedSecondId = fighterId;
+            card.classList.add('selected-second');
+            const badge = card.querySelector('#badge-second-' + fighterId);
+            if (badge) badge.style.display = 'inline-block';
+            button.classList.add('selected');
+
+            const selectedSecondEl = document.getElementById('selectedSecond');
+            if (selectedSecondEl) selectedSecondEl.textContent = fighterName;
+            const secondIdInput = document.getElementById('secondIdInput');
+            if (secondIdInput) secondIdInput.value = fighterId;
         }
-    </script>
+
+        // Проверяем, можно ли начать бой
+        const startBtn = document.getElementById('startFightBtn');
+        if (startBtn) {
+            if (selectedFirstId && selectedSecondId && selectedFirstId !== selectedSecondId) {
+                startBtn.disabled = false;
+            } else {
+                startBtn.disabled = true;
+            }
+        }
+    }
+</script>
 </body>
 </html>
 
